@@ -1,0 +1,148 @@
+{
+  "ranked": [
+    {
+      "rank": 1,
+      "id": "E01-S1",
+      "type": "single",
+      "duration_s": 33.88,
+      "segments": [
+        {
+          "episode": 1,
+          "start": "00:30.41",
+          "end": "01:04.29",
+          "start_s": 30.41,
+          "end_s": 64.29,
+          "dur_s": 33.88
+        }
+      ],
+      "hook": "LILA: \"Did you really think a waitress could marry a Sterling?\"",
+      "cliffhanger": "[camera] Extreme close-up on the stranger's ring: the crest of the Sterling family's biggest rival. Cut to black.",
+      "why": "hook strength 3.2; cliff strength 2.8",
+      "hook_line_in_script": "LILA: \"Did you really think a waitress could marry a Sterling?\"",
+      "cliff_line_in_script": "[camera] Extreme close-up on the stranger's ring: the crest of the Sterling family's biggest rival. Cut to black.",
+      "emotion": "",
+      "platform_risk": "",
+      "stranger_summary": "",
+      "stranger_match_0_2": null,
+      "confusing_for_new_viewer": "",
+      "scores": {
+        "final": 11.0,
+        "hook": 3.2,
+        "cliff": 2.8,
+        "density": 3.64,
+        "debt": 0.0,
+        "explain": 3.0,
+        "mid_convo": false,
+        "crowd": 0,
+        "rules10": 10.0,
+        "funnel": 1.0,
+        "llm_hook": null,
+        "llm_cliff": null,
+        "llm_standalone": null,
+        "llm_rank_points": null
+      },
+      "characters": [
+        "LILA",
+        "MAYA",
+        "STRANGER"
+      ],
+      "thread": []
+    },
+    {
+      "rank": 2,
+      "id": "E02-S1",
+      "type": "single",
+      "duration_s": 35.47,
+      "segments": [
+        {
+          "episode": 2,
+          "start": "00:28.55",
+          "end": "01:04.02",
+          "start_s": 28.55,
+          "end_s": 64.02,
+          "dur_s": 35.47
+        }
+      ],
+      "hook": "[camera] Cut to the boardroom: Ryan bursts in, furious, and grabs Adrian's collar.",
+      "cliffhanger": "[camera] Reaction close-up holding on the faces in the room.",
+      "why": "hook strength 4.0; cliff strength 1.6",
+      "hook_line_in_script": "[camera] Cut to the boardroom: Ryan bursts in, furious, and grabs Adrian's collar.",
+      "cliff_line_in_script": "[camera] Reaction close-up holding on the faces in the room.",
+      "emotion": "",
+      "platform_risk": "",
+      "stranger_summary": "",
+      "stranger_match_0_2": null,
+      "confusing_for_new_viewer": "",
+      "scores": {
+        "final": 6.667,
+        "hook": 4.0,
+        "cliff": 1.65,
+        "density": 4.16,
+        "debt": 0.0,
+        "explain": 0.0,
+        "mid_convo": false,
+        "crowd": 0,
+        "rules10": 6.67,
+        "funnel": 0.0,
+        "llm_hook": null,
+        "llm_cliff": null,
+        "llm_standalone": null,
+        "llm_rank_points": null
+      },
+      "characters": [
+        "RYAN",
+        "ADRIAN",
+        "LILA"
+      ],
+      "thread": []
+    },
+    {
+      "rank": 3,
+      "id": "E02-S2",
+      "type": "single",
+      "duration_s": 21.51,
+      "segments": [
+        {
+          "episode": 2,
+          "start": "00:07.04",
+          "end": "00:28.55",
+          "start_s": 7.04,
+          "end_s": 28.55,
+          "dur_s": 21.51
+        }
+      ],
+      "hook": "ADRIAN: \"From tonight, no one humiliates my wife.\"",
+      "cliffhanger": "[action] Maya freezes; the pen drops from her hand.",
+      "why": "hook strength 1.6; cliff strength 1.5",
+      "hook_line_in_script": "ADRIAN: \"From tonight, no one humiliates my wife.\"",
+      "cliff_line_in_script": "[action] Maya freezes; the pen drops from her hand.",
+      "emotion": "",
+      "platform_risk": "",
+      "stranger_summary": "",
+      "stranger_match_0_2": null,
+      "confusing_for_new_viewer": "",
+      "scores": {
+        "final": 3.333,
+        "hook": 1.6,
+        "cliff": 1.5,
+        "density": 2.21,
+        "debt": 0.0,
+        "explain": 1.0,
+        "mid_convo": false,
+        "crowd": 0,
+        "rules10": 3.33,
+        "funnel": 0.0,
+        "llm_hook": null,
+        "llm_cliff": null,
+        "llm_standalone": null,
+        "llm_rank_points": null
+      },
+      "characters": [
+        "ADRIAN",
+        "MAYA"
+      ],
+      "thread": []
+    }
+  ],
+  "unranked_rule_candidates": []
+}

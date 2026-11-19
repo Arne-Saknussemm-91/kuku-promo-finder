@@ -1,0 +1,66 @@
+{
+  "_note": "Genre-tunable signal lists. Weights are per hit. Edit this file to adapt to a new genre (mafia, werewolf, CEO) without touching code.",
+  "leak_words": ["cliffhanger", "hook"],
+  "physical_shock": {
+    "weight": 2.0,
+    "words": ["slap", "slaps", "slapped", "strike", "strikes", "struck", "punch", "punches", "shove", "shoves", "shoved",
+      "grab", "grabs", "grabbed", "seize", "seizes", "yank", "yanks", "throws", "hurls", "smash", "smashes", "shatter", "shatters",
+      "collapse", "collapses", "faint", "faints", "blood", "bleeding", "bloody", "knife", "dagger", "blade", "sword", "pistol", "gun",
+      "whip", "crop", "choke", "chokes", "choking", "strangle", "stab", "stabs", "kneel", "kneels", "drags", "dragged", "tears", "rips",
+      "kiss", "kisses", "kissed", "falls", "crash", "crashes", "burst", "bursts", "slams", "kicks", "kicked", "spit", "spits", "pour", "pours",
+      "wine", "poison", "vial", "arsenic", "chains", "shackled", "noose", "fire", "flames", "scream", "screams"]
+  },
+  "shock_line": {
+    "weight": 1.6,
+    "words": ["pregnant", "child", "baby", "dead", "death", "die", "kill", "killed", "murder", "murderer", "poison", "poisoned",
+      "divorce", "wedding", "marry", "married", "husband", "wife", "bride", "betray", "betrayed", "liar", "thief", "whore", "harlot",
+      "bastard", "disown", "disowned", "disinherit", "heir", "duke", "duchess", "king", "crown", "prison", "hang", "hanged", "execute",
+      "guilty", "traitor", "treason", "nothing", "worthless", "beggar", "peasant", "cripple", "crippled", "mute", "blind", "scar", "scarred",
+      "secret", "truth", "lie", "lies", "never", "dare", "kneel", "beg", "mine", "fired", "banished", "exile", "annul", "inheritance", "fortune"]
+  },
+  "arousal_emotion": {
+    "weight": 1.0,
+    "words": ["screaming", "shouting", "furious", "enraged", "outraged", "shocked", "stunned", "hysterical", "terrified", "panicked",
+      "venomous", "cruel", "threatening", "menacing", "sinister", "chilling", "gasping", "sobbing", "weeping", "desperate", "frantic",
+      "mocking", "taunting", "gloating", "spiteful", "vindictive", "malicious", "scornful", "contemptuous", "incredulous", "horrified",
+      "accusatory", "accusing", "booming", "explosive", "savage", "triumphant", "defiant", "fierce", "broken", "choked", "heartbroken"]
+  },
+  "sfx_intensity": {
+    "weight": 1.2,
+    "words": ["crack", "slam", "sting", "gasp", "gasps", "scream", "thunder", "shatter", "crash", "gunshot", "boom", "hit",
+      "impact", "thud", "smack", "whoosh", "swell", "stinger", "silence", "heartbeat", "ominous"]
+  },
+  "unresolved_action": {
+    "weight": 1.5,
+    "words": ["raises", "raised", "reaches", "lunges", "aims", "lifts", "freezes", "frozen", "widen", "widens", "stares", "turns",
+      "enters", "appears", "steps in", "doors", "door", "silhouette", "approaches", "advances", "looms", "hesitates", "trembles",
+      "about to", "falls", "collapses", "faints", "unconscious", "drinks", "sips", "pours", "reveals", "unveils", "removes", "pulls back",
+      "tears off", "mask", "hood", "letter", "ring", "pendant", "seal", "document", "envelope"]
+  },
+  "threat_or_tease": {
+    "weight": 1.7,
+    "words": ["you will", "you'll", "will pay", "regret", "or else", "until", "soon", "tonight", "tomorrow", "find out", "who you are",
+      "who i am", "who he is", "don't know", "doesn't know", "the truth", "secret", "if you", "unless", "watch", "wait", "mark my words",
+      "you have no idea", "last time", "end you", "destroy", "ruin", "won't let", "never let", "belongs to", "what did you", "what have you",
+      "how dare", "what is this", "who are you", "what are you", "it was you", "you did this"]
+  },
+  "cut_camera": {
+    "weight": 1.3,
+    "words": ["cut to black", "smash cut", "freeze", "push-in", "push in", "extreme close-up", "snap zoom", "crash zoom", "dolly in",
+      "close-up on", "reaction", "holds on", "hold on", "lingers", "fade to black"]
+  },
+  "self_explaining": {
+    "_note": "Relationship/role words let a stranger understand who is who without backstory.",
+    "weight": 1.0,
+    "words": ["my husband", "your husband", "my wife", "your wife", "my sister", "your sister", "my brother", "my father", "your father",
+      "my mother", "your mother", "my son", "my daughter", "your son", "fiancé", "fiance", "bride", "groom", "duke", "duchess", "maid",
+      "servant", "wedding", "married", "marry", "mother-in-law", "stepmother", "stepsister", "heir", "lord", "lady", "soldier", "widow"]
+  },
+  "context_debt": {
+    "_note": "Words that lean on earlier episodes; a stranger will be lost.",
+    "weight": 1.0,
+    "words": ["again", "still", "remember", "as i said", "you promised", "last night", "that night", "earlier", "already", "the antidote",
+      "the letter", "the plan", "as we agreed", "like before", "back then", "told you", "the other", "him again", "her again", "that man",
+      "that woman", "what happened", "the same"]
+  }
+}

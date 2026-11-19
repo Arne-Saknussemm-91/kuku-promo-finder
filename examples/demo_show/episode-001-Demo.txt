@@ -1,0 +1,106 @@
+EPISODE NUMBER: Episode 1
+EPISODE LOGLINE: Maya is humiliated at her engagement party when her fiancé Ryan announces he is marrying her stepsister Lila.
+CONTINUITY NOTES: Synthetic demo episode written for the public repo (not Kuku content).
+
+--- SCRIPT START ---
+
+SCENE 01
+Scene heading: INT. ROOFTOP – NIGHT
+Scene start: 00:00.00
+Scene end: 01:07.29
+
+Actions and dialogue:
+
+**CAMERA:**
+Start: (00:00.00) | End: (00:04.71)
+Wide shot of a glittering rooftop party; Maya in a red dress raises a glass.
+
+**CAMERA:**
+Start: (00:04.71) | End: (00:07.71)
+Reaction close-up holding on the faces in the room.
+
+**CAMERA:**
+Start: (00:07.71) | End: (00:13.91)
+Medium close-up on Ryan.
+
+**RYAN (Raising glass, Smug):**
+Start: (00:07.91) | End: (00:13.71)
+"Everyone, I have an announcement. I'm marrying the love of my life."
+
+**CAMERA:**
+Start: (00:13.91) | End: (00:16.26)
+Medium close-up on Maya.
+
+**MAYA (Glowing):**
+Start: (00:14.11) | End: (00:16.06)
+"Ryan..."
+
+**CAMERA:**
+Start: (00:16.26) | End: (00:19.66)
+Medium close-up on Ryan.
+
+**RYAN (Cold, Cruel):**
+Start: (00:16.46) | End: (00:19.46)
+"Not you, Maya. Lila."
+
+**SOUND FX:**
+Start: (00:19.66) | End: (00:25.30)
+A glass shatters on the floor; the music cuts dead.
+
+**ACTION:**
+Start: (00:25.30) | End: (00:30.41)
+Lila steps forward and slaps Maya across the face in front of every guest.
+
+**CAMERA:**
+Start: (00:30.41) | End: (00:35.91)
+Medium close-up on Lila.
+
+**LILA (Mocking, Venomous):**
+Start: (00:30.61) | End: (00:35.71)
+"Did you really think a waitress could marry a Sterling?"
+
+**CAMERA:**
+Start: (00:35.91) | End: (00:39.31)
+Medium close-up on Maya.
+
+**MAYA (Trembling, Shocked):**
+Start: (00:36.11) | End: (00:39.11)
+"You were my sister."
+
+**CAMERA:**
+Start: (00:39.31) | End: (00:45.12)
+Close-up on Maya's face as tears fall and her jaw sets.
+
+**CAMERA:**
+Start: (00:45.12) | End: (00:48.12)
+Reaction close-up holding on the faces in the room.
+
+**ACTION:**
+Start: (00:48.12) | End: (00:54.00)
+A tall stranger in a black coat steps out of the elevator and walks straight to Maya.
+
+**CAMERA:**
+Start: (00:54.00) | End: (00:57.05)
+Medium close-up on Stranger.
+
+**STRANGER (Low, Commanding):**
+Start: (00:54.20) | End: (00:56.85)
+"Marry me. Tonight."
+
+**CAMERA:**
+Start: (00:57.05) | End: (01:00.10)
+Medium close-up on Maya.
+
+**MAYA (Stunned):**
+Start: (00:57.25) | End: (00:59.90)
+"Who are you?"
+
+**CAMERA:**
+Start: (01:00.10) | End: (01:04.29)
+Extreme close-up on the stranger's ring: the crest of the Sterling family's biggest rival. Cut to black.
+
+**CAMERA:**
+Start: (01:04.29) | End: (01:07.29)
+Reaction close-up holding on the faces in the room.
+
+--- SCRIPT END ---

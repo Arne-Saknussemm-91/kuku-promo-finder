@@ -1,0 +1,12 @@
+# Kuku input pack is confidential - never commit
+input/
+assignment.pdf
+.cache/
+__pycache__/
+*.pyc
+.env
+.venv/
+# outputs quote confidential scripts -> share via private Drive link, not GitHub
+outputs/*
+!outputs/demo/
+config/.ablation_tmp.json

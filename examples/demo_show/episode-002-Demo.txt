@@ -1,0 +1,102 @@
+EPISODE NUMBER: Episode 2
+EPISODE LOGLINE: Maya accepts the stranger's offer and learns he is Adrian Vale, the billionaire who owns Ryan's company.
+CONTINUITY NOTES: Synthetic demo episode written for the public repo (not Kuku content).
+
+--- SCRIPT START ---
+
+SCENE 01
+Scene heading: INT. COURTHOUSE – NIGHT
+Scene start: 00:00.00
+Scene end: 01:04.02
+
+Actions and dialogue:
+
+**CAMERA:**
+Start: (00:00.00) | End: (00:04.04)
+Medium shot of a courthouse at midnight; Maya signs a marriage certificate.
+
+**CAMERA:**
+Start: (00:04.04) | End: (00:07.04)
+Reaction close-up holding on the faces in the room.
+
+**CAMERA:**
+Start: (00:07.04) | End: (00:11.49)
+Medium close-up on Adrian.
+
+**ADRIAN (Calm):**
+Start: (00:07.24) | End: (00:11.29)
+"From tonight, no one humiliates my wife."
+
+**CAMERA:**
+Start: (00:11.49) | End: (00:15.59)
+Medium close-up on Maya.
+
+**MAYA (Wary):**
+Start: (00:11.69) | End: (00:15.39)
+"I don't even know your name."
+
+**CAMERA:**
+Start: (00:15.59) | End: (00:18.29)
+Medium close-up on Adrian.
+
+**ADRIAN (Quiet, Dangerous):**
+Start: (00:15.79) | End: (00:18.09)
+"Adrian Vale."
+
+**ACTION:**
+Start: (00:18.29) | End: (00:24.80)
+Maya freezes; the pen drops from her hand.
+
+**CAMERA:**
+Start: (00:24.80) | End: (00:28.55)
+Medium close-up on Maya.
+
+**MAYA (Breathless, Incredulous):**
+Start: (00:25.00) | End: (00:28.35)
+"Vale? You own Ryan's company?"
+
+**CAMERA:**
+Start: (00:28.55) | End: (00:33.33)
+Cut to the boardroom: Ryan bursts in, furious, and grabs Adrian's collar.
+
+**CAMERA:**
+Start: (00:33.33) | End: (00:36.33)
+Reaction close-up holding on the faces in the room.
+
+**CAMERA:**
+Start: (00:36.33) | End: (00:39.73)
+Medium close-up on Ryan.
+
+**RYAN (Shouting, Furious):**
+Start: (00:36.53) | End: (00:39.53)
+"She's nothing! A waitress!"
+
+**CAMERA:**
+Start: (00:39.73) | End: (00:43.83)
+Medium close-up on Adrian.
+
+**ADRIAN (Cold, Final):**
+Start: (00:39.93) | End: (00:43.63)
+"She is your new boss. Kneel."
+
+**ACTION:**
+Start: (00:43.83) | End: (00:48.53)
+Every executive in the room turns to stare as Ryan slowly lowers to one knee.
+
+**CAMERA:**
+Start: (00:48.53) | End: (00:54.03)
+Medium close-up on Lila.
+
+**LILA (Panicked, Whispering):**
+Start: (00:48.73) | End: (00:53.83)
+"If he finds out what I did to her mother..."
+
+**CAMERA:**
+Start: (00:54.03) | End: (01:01.02)
+Push-in on Lila's terrified face as she hides a small vial of pills in her purse.
+
+**CAMERA:**
+Start: (01:01.02) | End: (01:04.02)
+Reaction close-up holding on the faces in the room.
+
+--- SCRIPT END ---

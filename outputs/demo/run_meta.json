@@ -1,0 +1,25 @@
+{
+  "show": "demo_show",
+  "episodes": 2,
+  "candidates": 3,
+  "rule_singles": 3,
+  "rule_supercuts": 0,
+  "judged": 0,
+  "model": "none:rules-only",
+  "llm": {
+    "model": "none:rules-only",
+    "api_calls": 0,
+    "cache_hits": 0,
+    "tokens_in": 0,
+    "tokens_out": 0
+  },
+  "runtime_s": 0.0,
+  "top_reason": [],
+  "main_characters": [
+    "MAYA",
+    "RYAN",
+    "ADRIAN",
+    "LILA",
+    "STRANGER"
+  ]
+}
