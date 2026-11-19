@@ -1,0 +1,3 @@
+# core runs on the Python standard library only.
+# optional: official SDK for --provider anthropic
+anthropic==2.10.0

@@ -1,14 +1,15 @@
 {
   "show": "demo_show",
   "episodes": 2,
-  "candidates": 3,
-  "rule_singles": 3,
+  "candidates": 4,
+  "rule_singles": 4,
   "rule_supercuts": 0,
   "judged": 0,
   "model": "none:rules-only",
   "llm": {
     "model": "none:rules-only",
     "api_calls": 0,
+    "pending": 0,
     "cache_hits": 0,
     "tokens_in": 0,
     "tokens_out": 0

@@ -217,7 +217,12 @@ def evaluate(input_dir, out_dir, run_dir=None, provider="none", model=None):
     rep["E_deterministic"] = determinism(input_dir)
     if provider != "none":
         from .llm import LLM
-        rep["F_cliff_choice_heldout"] = llm_cliff_benchmark(eps, LLM(provider, model), lex)
+        llm = LLM(provider, model)
+        f = llm_cliff_benchmark(eps, llm, lex)
+        if llm.pending:
+            print(f"[queue] {llm.pending} benchmark prompts waiting in .cache/queue/; answer them and rerun eval")
+            return None
+        rep["F_cliff_choice_heldout"] = f
     if run_dir:
         rep["C_audit"] = audit_run(eps, run_dir)
         rep["D_llm"] = llm_agreement(run_dir)

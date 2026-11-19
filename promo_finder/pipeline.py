@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 ALIAS_SYS = "You map screenplay speaker labels to named characters. Only map when the script makes it clear. Return ONLY JSON."
 ALIAS_USER = """Speaker labels in a show (label | lines | first line spoken | episode loglines mentioning them are below).
-Some labels are descriptions of a named character before their name is revealed (e.g. "THE FORMER GROOM" may be GERALD).
+Some labels are descriptions of a named character before their name is revealed (e.g. "MASKED RIDER" may later be named DAMIEN).
 LABELS:
 {labels}
 LOGLINES:
@@ -43,7 +43,25 @@ def llm_aliases(llm, eps):
     return out
 
 
-def run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40, weights_file=None,
+class Pending(Exception):
+    pass
+
+
+def _gate(llm, stage, log):
+    if llm.pending:
+        log(f"[queue] {llm.pending} prompts waiting in .cache/queue/ for stage '{stage}'. "
+            f"Answer them (<key>.answer.json) and rerun the same command.")
+        raise Pending(stage)
+
+
+def run(*a, **kw):
+    try:
+        return _run(*a, **kw)
+    except Pending:
+        return None, None
+
+
+def _run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40, weights_file=None,
         lexicon=None, fps=30, video_pattern="episode-{ep:03d}.mp4", log=print):
     t0 = time.time()
     out = Path(out_dir)
@@ -61,6 +79,7 @@ def run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40,
     alias_file = out / "aliases.json"
     if llm.enabled:
         aliases = llm_aliases(llm, eps)
+        _gate(llm, "aliases", log)
         write_json(alias_file, {"_note": "speaker label -> character; edit freely, rerun to apply", **aliases})
     build_cast(eps, alias_file if alias_file.exists() else None)
     mains = main_characters(eps)
@@ -88,6 +107,7 @@ def run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40,
                 seen.add((b["ep"], b["t0"], b["t1"]))
                 uniq.append(b)
         composed, rejected = compose_supercuts(llm, eps, E, uniq, show)
+        _gate(llm, "compose", log)
         short += composed
         log(f"[4/7] LLM trailer-editor proposed {len(composed) + len(rejected)} supercuts; "
             f"code kept {len(composed)}, rejected {len(rejected)}")
@@ -95,7 +115,9 @@ def run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40,
             c.llm = judge_candidate(llm, E, c)
             if (i + 1) % 10 == 0:
                 log(f"      judged {i + 1}/{len(short)}")
+        _gate(llm, "judge", log)
         stranger_check(llm, E, short)
+        _gate(llm, "stranger", log)
         log(f"[5/7] blind judge + stranger test on {len(short)} candidates")
     else:
         log("[4/7] rules-only mode (no LLM): skipping composer, judge, stranger test")
@@ -105,6 +127,7 @@ def run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40,
     if llm.enabled:
         finalists = sorted(short, key=lambda c: -c.final)[:15]
         pts, reasons = rank_list(llm, finalists, rounds=3)
+        _gate(llm, "rank", log)
         for c in finalists:
             c.llm["rank_points"] = round(pts[c.cid], 3)
             c.final = round(c.final + 2.0 * pts[c.cid], 3)

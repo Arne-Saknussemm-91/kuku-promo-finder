@@ -50,7 +50,9 @@ class Lexicon:
         for k, v in raw.items():
             if isinstance(v, dict) and "words" in v:
                 words = sorted(set(w.lower() for w in v["words"]), key=len, reverse=True)
-                pats = [re.compile(r"(?<![a-z])" + re.escape(w) + r"(?![a-z])") for w in words]
+                # match common inflections too: marry -> marrying, betray -> betrayed, hang -> hangs
+                pats = [re.compile(r"(?<![a-z])" + re.escape(w) + (r"(?:s|es|ed|d|ing)?" if " " not in w and len(w) >= 4 else "")
+                                   + r"(?![a-z])") for w in words]
                 self.groups[k] = (float(v.get("weight", 1.0)), words, pats)
 
     def scrub(self, text: str) -> str:

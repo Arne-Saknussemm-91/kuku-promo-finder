@@ -6,8 +6,12 @@ code path covers all of them. Responses are cached on disk keyed by
 
     --provider groq   --model llama-3.3-70b-versatile     (GROQ_API_KEY)
     --provider gemini --model gemini-2.5-flash            (GEMINI_API_KEY)
-    --provider openrouter / openai / anthropic / together / ollama
+    --provider anthropic --model claude-haiku-5-5        (ANTHROPIC_API_KEY; official SDK)
+    --provider openrouter / openai / together / ollama
     --provider custom  (PROMO_LLM_BASE_URL + PROMO_LLM_API_KEY)
+    --provider queue   no API: prompts are written to .cache/queue/, any agent
+                       (e.g. a Claude Code Haiku subagent) answers them into
+                       <key>.answer.json, rerun picks answers up stage by stage
     --provider none    rules only, no network
 """
 from __future__ import annotations
@@ -23,15 +27,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / ".cache" / "llm"
+QUEUE = Path(os.environ.get("PROMO_QUEUE_DIR", ROOT / ".cache" / "queue"))
 
 PROVIDERS = {
     "groq": ("https://api.groq.com/openai/v1", "GROQ_API_KEY", "llama-3.3-70b-versatile"),
     "gemini": ("https://generativelanguage.googleapis.com/v1beta/openai", "GEMINI_API_KEY", "gemini-2.5-flash"),
     "openrouter": ("https://openrouter.ai/api/v1", "OPENROUTER_API_KEY", "meta-llama/llama-3.3-70b-instruct:free"),
     "openai": ("https://api.openai.com/v1", "OPENAI_API_KEY", "gpt-4o-mini"),
-    "anthropic": ("https://api.anthropic.com/v1", "ANTHROPIC_API_KEY", "claude-haiku-5-5"),
+    "anthropic": ("sdk", "ANTHROPIC_API_KEY", "claude-haiku-5-5"),
     "together": ("https://api.together.xyz/v1", "TOGETHER_API_KEY", "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
     "ollama": ("http://localhost:11434/v1", "", "qwen2.5:7b"),
+    "queue": ("queue", "", "claude-haiku-5-5"),
     "custom": (os.environ.get("PROMO_LLM_BASE_URL", ""), "PROMO_LLM_API_KEY", os.environ.get("PROMO_LLM_MODEL", "")),
 }
 
@@ -52,7 +58,7 @@ class LLM:
         provider = (provider or "none").lower()
         self.provider = provider
         self.enabled = provider != "none"
-        self.calls = self.cache_hits = self.tokens_in = self.tokens_out = 0
+        self.calls = self.cache_hits = self.tokens_in = self.tokens_out = self.pending = 0
         self.verbose = verbose
         self.temperature, self.max_tokens = temperature, max_tokens
         if not self.enabled:
@@ -64,19 +70,102 @@ class LLM:
         self.base = os.environ.get("PROMO_LLM_BASE_URL", base) if provider == "custom" else base
         self.key = os.environ.get(keyvar, "") if keyvar else "ollama"
         self.model = model or os.environ.get("PROMO_LLM_MODEL") or default_model
+        CACHE.mkdir(parents=True, exist_ok=True)
+        if provider == "queue":
+            QUEUE.mkdir(parents=True, exist_ok=True)
+            return
+        if provider == "anthropic":
+            try:
+                import anthropic
+            except ImportError:
+                raise SystemExit("pip install anthropic  (needed for --provider anthropic)")
+            self._anthropic = anthropic
+            # zero-arg client resolves ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN / `ant auth login` profile
+            if not any(os.environ.get(k) for k in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_PROFILE")) \
+                    and not (Path.home() / ".config" / "anthropic").exists():
+                raise SystemExit("no Anthropic credentials: set ANTHROPIC_API_KEY (or `ant auth login`), "
+                                 "or use --provider queue")
+            self.client = anthropic.Anthropic(max_retries=8)
+            return
         if not self.key:
             raise SystemExit(f"{keyvar} not set (put it in .env or export it), or use --provider none")
-        CACHE.mkdir(parents=True, exist_ok=True)
 
     @property
     def tag(self):
         return f"{self.provider}:{self.model}"
 
+    def _key(self, system, user):
+        return hashlib.sha256(json.dumps({"p": "anthropic", "m": self.model, "s": system, "u": user},
+                                         sort_keys=True).encode()).hexdigest()[:24]
+
+    def _chat_queue(self, system: str, user: str) -> str:
+        key = self._key(system, user)
+        f = CACHE / f"{key}.json"
+        ans = QUEUE / f"{key}.answer.json"
+        if not f.exists() and ans.exists():
+            content = ans.read_text().strip()
+            f.write_text(json.dumps({"model": self.model + " (agent-answered)", "content": content,
+                                     "usage": {"output_chars": len(content)}}))
+            (QUEUE / f"{key}.json").unlink(missing_ok=True)
+            ans.unlink()
+            self.calls += 1
+            self.tokens_out += len(content) // 4
+            return content
+        if f.exists():
+            self.cache_hits += 1
+            return json.loads(f.read_text())["content"]
+        (QUEUE / f"{key}.json").write_text(json.dumps({"key": key, "system": system, "user": user}, indent=1))
+        self.pending += 1
+        return '{"_pending": true}'
+
+    def _chat_anthropic(self, system: str, user: str) -> str:
+        key = self._key(system, user)
+        f = CACHE / f"{key}.json"
+        if f.exists():
+            self.cache_hits += 1
+            return json.loads(f.read_text())["content"]
+        A = self._anthropic
+        try:
+            # Haiku 5.5: thinking is adaptive by default; sampling params must stay default (no temperature).
+            resp = self.client.messages.create(
+                model=self.model, max_tokens=16000,
+                system=system + "\nRespond with a single JSON object and nothing else.",
+                messages=[{"role": "user", "content": user}])
+        except A.AuthenticationError:
+            raise SystemExit("Anthropic auth failed: set ANTHROPIC_API_KEY (or run `ant auth login`)")
+        except A.NotFoundError:
+            raise SystemExit(f"model {self.model} not found for this account")
+        except A.BadRequestError as e:
+            raise SystemExit(f"Anthropic bad request: {e.message}")
+        except A.RateLimitError:
+            raise SystemExit("rate limited after retries; rerun later (finished calls are cached)")
+        except A.APIStatusError as e:
+            raise SystemExit(f"Anthropic API error {e.status_code}: {e.message}")
+        except A.APIConnectionError:
+            raise SystemExit("network error reaching the Anthropic API")
+        if resp.stop_reason == "refusal":
+            content = '{"_refusal": true}'
+        else:
+            content = "".join(b.text for b in resp.content if b.type == "text")
+            if resp.stop_reason == "max_tokens" and self.verbose:
+                print("  [llm] hit max_tokens; output may be truncated")
+        self.calls += 1
+        self.tokens_in += resp.usage.input_tokens
+        self.tokens_out += resp.usage.output_tokens
+        f.write_text(json.dumps({"model": self.model, "content": content,
+                                 "usage": {"input_tokens": resp.usage.input_tokens,
+                                           "output_tokens": resp.usage.output_tokens}}))
+        return content
+
     def chat(self, system: str, user: str, json_mode: bool = True, temperature: float | None = None) -> str:
+        if self.provider == "anthropic":
+            return self._chat_anthropic(system, user)
+        if self.provider == "queue":
+            return self._chat_queue(system, user)
         temp = self.temperature if temperature is None else temperature
         payload = {"model": self.model, "temperature": temp, "max_tokens": self.max_tokens,
                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
-        if json_mode and self.provider not in ("anthropic",):
+        if json_mode:
             payload["response_format"] = {"type": "json_object"}
         key = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:24]
         f = CACHE / f"{key}.json"
@@ -89,7 +178,6 @@ class LLM:
                                          data=json.dumps(payload).encode(),
                                          headers={"Content-Type": "application/json",
                                                   "Authorization": f"Bearer {self.key}",
-                                                  "x-api-key": self.key, "anthropic-version": "2023-06-01",
                                                   "User-Agent": "promo-finder/1.0"})
             try:
                 with urllib.request.urlopen(req, timeout=120) as r:
@@ -131,7 +219,7 @@ class LLM:
         return parse_json(txt)
 
     def stats(self):
-        return {"model": self.tag, "api_calls": self.calls, "cache_hits": self.cache_hits,
+        return {"model": self.tag, "api_calls": self.calls, "pending": self.pending, "cache_hits": self.cache_hits,
                 "tokens_in": self.tokens_in, "tokens_out": self.tokens_out}
 
 
