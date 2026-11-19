@@ -23,9 +23,10 @@ Try it now on the public demo show (synthetic, written for this repo):
 | 3 signals | code | per beat: hook (slap, shock line, scream), cliff (unresolved action, reaction push-in, music sting), backstory debt, self-explaining relations. Word lists in `config/lexicon.json` → retune per genre without code |
 | 4 candidates | code | every legal cut: on shot boundaries, never mid-line, 20–60 s. Supercuts join 2–3 beats from different episodes on one story thread |
 | 5 compose | LLM | "trailer editor" builds supercuts from validated beat IDs only; code re-checks order, length, IDs (hallucinated IDs rejected and logged) |
+| 5b scout | LLM | reads each episode once, names the moments a scroller would stop on (situational hooks words can't see, e.g. a bride seeing her groom with another woman); code snaps them to legal cuts |
 | 6 judge | LLM | **blind**: sees only the clip, like a stranger on TikTok. Scores hook / cliff / standalone, names hook + cliffhanger, writes why, flags platform risk |
 | 7 stranger test | LLM | separate call compares the blind judge's guess of the story to the writers' logline → measured "makes sense on its own" |
-| 8 rank | code + LLM | 0.35·rules + 0.65·LLM + stranger bonus + funnel (early-episode promos first) − risk; listwise LLM ranking ×3 shuffled (cancels position bias); MMR so the first posts test different angles |
+| 8 rank | code + LLM | 0.35·first-pass (rule score, or scout score for scouted clips; both percentiles) + 0.65·LLM + stranger bonus + funnel (early-episode promos first) − risk; listwise LLM ranking ×3 shuffled (cancels position bias); MMR so the first posts test different angles |
 | 9 export | code | `promos.json/csv/md`, CMX3600 `edl/` per promo (Premiere/Resolve), `cut_promos.sh` (ffmpeg), interactive `board.html` |
 | 10 learn | code | editor clicks Post/Skip on the board → `feedback.json` → `learn` refits weights |
 
