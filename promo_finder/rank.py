@@ -23,8 +23,14 @@ def score_all(cands: list[Candidate], n_eps: int, use_llm: bool):
     pr = {}
     for kind in {c.kind for c in cands}:          # singles and supercuts score on different scales
         pr.update({(kind, k): v for k, v in _pct([c.rule_score for c in cands if c.kind == kind]).items()})
+    sc = [float(c.parts.get("scout_score") or 0) for c in cands if c.parts.get("source") == "llm-scout"]
+    scout_pct = _pct(sc) if sc else {}
     for c in cands:
         rules10 = pr[(c.kind, c.rule_score)]
+        if c.parts.get("source") == "llm-scout":
+            # found by the AI scout, not the word rules: its first-pass evidence is the scout score,
+            # turned into a percentile among scouted clips (LLM scores run high; this keeps scales fair)
+            rules10 = scout_pct.get(float(c.parts.get("scout_score") or 0), rules10)
         funnel = 1.0 - (c.first_ep - 1) / max(1, n_eps - 1)
         c.parts["rules10"] = round(rules10, 2)
         c.parts["funnel"] = round(funnel, 2)

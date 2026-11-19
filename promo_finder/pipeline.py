@@ -10,7 +10,7 @@ from . import candidates as C
 from .cast import build_cast, main_characters
 from .export import promo_record, write_csv, write_edl, write_ffmpeg, write_json, write_markdown
 from .features import Lexicon, annotate
-from .judge import compose_supercuts, judge_candidate, rank_list, stranger_check
+from .judge import compose_supercuts, judge_candidate, rank_list, scout_hooks, stranger_check
 from .llm import LLM
 from .parse import load_show
 from .rank import diverse_order, score_all
@@ -109,6 +109,12 @@ def _run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40
         composed, rejected = compose_supercuts(llm, eps, E, uniq, show)
         _gate(llm, "compose", log)
         short += composed
+        scouted = scout_hooks(llm, eps)
+        _gate(llm, "scout", log)
+        found = C.from_scouted(eps, sig, scouted, short, weights=weights)
+        short += found
+        log(f"      LLM hook scout: {len(scouted)} moments proposed, {len(found)} new cut-safe candidates "
+            f"(eps {sorted({c.segments[0].ep for c in found})})")
         log(f"[4/7] LLM trailer-editor proposed {len(composed) + len(rejected)} supercuts; "
             f"code kept {len(composed)}, rejected {len(rejected)}")
         for i, c in enumerate(short):

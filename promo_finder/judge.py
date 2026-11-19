@@ -196,3 +196,43 @@ def rank_list(llm, cands: list[Candidate], rounds=3, seed=7) -> dict[str, float]
         if res.get("top_reason"):
             reasons.append(res["top_reason"])
     return {k: v / rounds for k, v in pts.items()}, reasons
+
+
+# ------------------------------------------------------------- hook scout
+SCOUT_SYS = """You are a promo editor for vertical microdrama ads. You read one episode's screenplay and find the
+moments that would stop a stranger scrolling TikTok in the first 3 seconds. Hooks are often SITUATIONS, not words:
+a bride sees her groom with another woman, a slap, a secret revealed, a public humiliation, a shocking entrance.
+Return ONLY JSON."""
+SCOUT_USER = """EPISODE {ep} (time-coded, seconds from episode start):
+{transcript}
+
+Pick the {k} strongest promo OPENING moments (where the first 3 seconds of a promo should start).
+Return JSON {{"moments": [{{"t": <seconds, a timestamp from the list>, "score": 1-10, "hook": "<what the viewer sees, <=15 words>"}}]}}"""
+
+
+def episode_transcript(ep, max_cam=80):
+    out = []
+    for ev in ep.events:
+        if ev.kind == "dialogue":
+            emo = f" ({ev.emotion})" if ev.emotion else ""
+            out.append(f"[{ev.start:06.1f}] {ev.char or ev.speaker}{emo}: \"{ev.text}\"")
+        elif ev.kind in ("action", "sfx"):
+            out.append(f"[{ev.start:06.1f}] {ev.kind.upper()}: {ev.text.replace('cliffhanger', '')[:max_cam]}")
+        elif ev.kind == "camera" and len(out) and not out[-1].startswith(f"[{ev.start:06.1f}]"):
+            out.append(f"[{ev.start:06.1f}] CAMERA: {ev.text[:max_cam]}")
+    return "\n".join(out)
+
+
+def scout_hooks(llm, eps, k=2):
+    """One call per episode. Returns [(ep_num, t, score, hook_text)], validated by code."""
+    res = []
+    for ep in eps:
+        r = llm.chat_json(SCOUT_SYS, SCOUT_USER.format(ep=ep.num, transcript=episode_transcript(ep), k=k))
+        for m in (r.get("moments") or [])[:k]:
+            try:
+                t, sc = float(m.get("t")), float(m.get("score", 0))
+            except (TypeError, ValueError):
+                continue
+            if 0 <= t < ep.duration - 20:                 # code rejects impossible timestamps
+                res.append((ep.num, t, sc, str(m.get("hook", ""))[:120]))
+    return res

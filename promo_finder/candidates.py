@@ -275,3 +275,40 @@ def supercuts(eps, sigmap, main_chars, top=40, keep=40):
         if len(out) >= keep:
             break
     return out
+
+
+def from_scouted(eps, sigmap, scouted, existing, top=15, weights=None):
+    """Turn LLM-scouted opening moments into cut-safe candidates: start on the last
+    clean shot boundary at/just before the moment, end on the best clean out point."""
+    E = {e.num: e for e in eps}
+    out = []
+    for epn, t, sc, hook in sorted(scouted, key=lambda x: -x[2]):
+        ep = E[epn]
+        sigs = sigmap[epn]
+        ins, outs = cut_points(ep)
+        starts = [x for x in ins if t - 2.5 <= x <= t + 0.5]
+        if not starts:
+            continue
+        t0 = max(starts)
+        best = None
+        for t1 in outs:
+            if MIN_LEN <= t1 - t0 <= MAX_LEN:
+                s, p = score_span(ep, sigs, t0, t1, weights)
+                cl = p["cliff"] - len_penalty(t1 - t0)
+                if best is None or cl > best[0]:
+                    best = (cl, t1, s, p)
+        if not best:
+            continue
+        seg = Segment(epn, t0, best[1])
+        if any(iou(seg, c.segments[0]) > 0.5 for c in existing + out if c.kind == "single"):
+            continue
+        _, t1, s, p = best
+        c = Candidate(cid=f"H{epn:02d}-{len(out) + 1}", kind="single", segments=[seg], rule_score=round(s, 3),
+                      parts={"hook": round(p["hook"], 2), "cliff": round(p["cliff"], 2), "density": round(p["density"], 2),
+                             "debt": p["debt"], "explain": p["explain"], "source": "llm-scout", "scout_score": sc},
+                      hook_text=hook, cliff_text=describe(p["cliff_ev"]), chars=p["chars"])
+        c._words = p["words"]
+        out.append(c)
+        if len(out) >= top:
+            break
+    return out
