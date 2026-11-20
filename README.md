@@ -1,7 +1,7 @@
 # Promo Finder — find ready-to-cut promos in microdrama screenplays
 
-**Web app:** `streamlit run app.py` locally, or deploy free on [Streamlit Community Cloud](https://share.streamlit.io)
-(pick this repo, main file `app.py`). Upload a zip of screenplays or try the bundled demo show; runs with no API key.
+**▶ Live app: https://kuku-promo-finder-bqv5ie9idzgmnebpxd9n6x.streamlit.app/** — upload a zip of screenplays or try the
+bundled demo show. Runs with no API key. (Free hosting sleeps when idle; first load can take ~30 s.)
 
 Reads a folder of timestamped episode scripts and returns ranked 20–60 s promos
 (single clips and cross-episode supercuts), each with exact cut points, the hook,
