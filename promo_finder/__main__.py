@@ -31,6 +31,10 @@ def main():
     l.add_argument("--feedback", required=True)
     l.add_argument("--candidates", required=True, help="all_candidates.json of the run the feedback came from")
     l.add_argument("--out", default="config/weights.json")
+    t = sub.add_parser("train", help="train the cliffhanger model on a show's own episode endings")
+    t.add_argument("--input", required=True)
+    t.add_argument("--out", default="config/model_cliff.json")
+    t.add_argument("--l2", type=float, default=2.0)
     a = ap.parse_args()
     if a.cmd == "run":
         from .pipeline import run
@@ -38,6 +42,18 @@ def main():
     elif a.cmd == "eval":
         from .evaluate import evaluate
         evaluate(a.input, a.out, a.run, a.provider, a.model)
+    elif a.cmd == "train":
+        from .bow import train, save, _names
+        from .cast import build_cast
+        from .parse import load_show
+        eps = load_show(a.input)
+        build_cast(eps)
+        m = train(eps, "cliff", train_eps=[e.num for e in eps], l2=a.l2)
+        save(m, a.out)
+        hi, _ = m.top(10)
+        print(f"trained on {len(eps)} episodes -> {a.out} ({len(m.w)} features)")
+        print("strongest ending signals:", ", ".join(k for k, _ in hi))
+        print("NOTE: a model trained on a confidential pack carries its vocabulary. Keep it out of public repos.")
     elif a.cmd == "learn":
         from .learn import learn
         learn(a.feedback, a.candidates, a.out)

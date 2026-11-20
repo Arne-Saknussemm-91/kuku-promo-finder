@@ -59,7 +59,7 @@ The two model rows below sit on a **different, smaller test set** (the 25 episod
 
 ## 5. Does a stranger understand it
 
-The judge's guess of the story, compared against the writers' logline: **17/20 got it**, 3 partly, 0 lost.
+The judge's guess of the story, compared against the writers' logline: **20/20 got it**, 0 partly, 0 lost.
 
 ## 6. Is the judge's scale trustworthy (control)
 
@@ -68,7 +68,7 @@ Professionally written episode openings, judged with the identical prompt:
 | | hook | cliffhanger | standalone |
 |---|---|---|---|
 | professional episode openings | 4.8 | 5.2 | 5.1 |
-| our top 20 promos | 6.3 | 6.3 | 5.7 |
+| our top 20 promos | 6.2 | 6.5 | 5.7 |
 
 The low absolute numbers are the prompt ("be strict, most clips are 4-6"), not the cuts.
 
@@ -85,7 +85,7 @@ A sound cue appears in 52% of episode-ending windows but also 25% of mid-episode
 
 ## 8. Other checks
 
-- Rules and the AI judge disagree on which shortlisted clip is best: rank correlation hook -0.244, cliffhanger 0.157.
+- Rules and the AI judge disagree on which shortlisted clip is best: rank correlation hook -0.414, cliffhanger 0.248.
 - Tightening the hook window from 3 s to 1.5 s changed nothing measurable (3/53 strong scouted hooks matched either way).
 - Rules output is deterministic: True. Model answers are cached, so a rerun is identical.
 - Cost per 50-episode show: ~170k input / 15k output tokens ≈ $0.04 on Haiku, ≈$1.6 on Opus, $0 on Groq's free tier.

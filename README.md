@@ -1,5 +1,8 @@
 # Promo Finder — find ready-to-cut promos in microdrama screenplays
 
+**Web app:** `streamlit run app.py` locally, or deploy free on [Streamlit Community Cloud](https://share.streamlit.io)
+(pick this repo, main file `app.py`). Upload a zip of screenplays or try the bundled demo show; runs with no API key.
+
 Reads a folder of timestamped episode scripts and returns ranked 20–60 s promos
 (single clips and cross-episode supercuts), each with exact cut points, the hook,
 the cliffhanger, a one-line "why", and files an editor can import directly.
@@ -7,11 +10,12 @@ the cliffhanger, a one-line "why", and files an editor can import directly.
 ```
 python -m promo_finder run --input <scripts folder> --out outputs/run1                  # rules only, no key, ~1 s
 python -m promo_finder run --input <scripts folder> --out outputs/run1 --provider groq   # + LLM judge
+python -m promo_finder train --input <scripts folder>                                    # retrain the cliffhanger model on that show (seconds, no key)
 python -m promo_finder eval --input <scripts folder> --run outputs/run1                  # quality report
 python -m promo_finder learn --feedback feedback.json --candidates outputs/run1/all_candidates.json
 ```
 
-Try it now on the public demo show (synthetic, written for this repo):
+**Reviewers:** the Kuku pack is not in this repo (confidential). Point `--input` at your own copy, or try the public demo show (synthetic, written for this repo):
 `python -m promo_finder run --input examples/demo_show --out outputs/demo` → open `outputs/demo/board.html`.
 
 ## How it works
@@ -56,6 +60,12 @@ for any agent to answer (used for testing with a Claude Code Haiku subagent; see
 ## Repo hygiene
 The Kuku input pack and any output that quotes it are confidential: `input/` and `outputs/*`
 (except the demo) are git-ignored. Share real-show outputs only through a private link.
+
+## Web app
+
+`app.py` is a Streamlit front end: upload a `.zip` of screenplays (or use the demo show), pick a provider
+(or leave it at *none* to run free), and get the ranked promos plus downloads for `promos.csv`, `promos.json`,
+`board.html` and the EDLs. An API key typed into the app is passed to that provider for the run and never stored.
 
 Requires Python 3.10+. Core uses the standard library only; `pip install -r requirements.txt`
 adds the official `anthropic` SDK for `--provider anthropic`. Tests: `python -m unittest discover tests`.
