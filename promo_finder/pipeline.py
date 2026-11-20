@@ -85,6 +85,9 @@ def _run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40
     mains = main_characters(eps)
     log(f"[2/7] cast: main = {', '.join(mains[:5])}; {len(aliases)} LLM aliases")
 
+    from .bow import Scorer
+    scorer = Scorer(eps=eps)
+    C.set_scorer(scorer)
     lex = Lexicon(lexicon) if lexicon else Lexicon()
     sig = {e.num: annotate(e, lex) for e in eps}
     weights = None
@@ -93,6 +96,7 @@ def _run(input_dir, out_dir, provider="none", model=None, top_k=20, shortlist=40
         weights = {k: v for k, v in json.loads(wf.read_text()).items() if not k.startswith("_")}
     S = C.singles(eps, sig, weights=weights)
     X = C.supercuts(eps, sig, mains)
+    log(f"      cliffhanger model: {'learned (config/model_cliff.json)' if scorer.ok else 'not found, rules only'}")
     log(f"[3/7] rules: {len(S)} single-clip + {len(X)} cross-episode candidates (all cut-safe)")
 
     pool = sorted(S, key=lambda c: -c.rule_score)

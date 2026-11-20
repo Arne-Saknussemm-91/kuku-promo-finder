@@ -20,7 +20,7 @@ Try it now on the public demo show (synthetic, written for this repo):
 |---|---|---|
 | 1 parse | code | every CAMERA / ACTION / SOUND / dialogue cue → timed event (exact; timestamps are the deliverable) |
 | 2 cast | code (+LLM) | merge labels for one person (JULIANA / LADY JULIANA); LLM proposes descriptive aliases, code rejects invented names |
-| 3 signals | code | per beat: hook (slap, shock line, scream), cliff (unresolved action, reaction push-in, music sting), backstory debt, self-explaining relations. Word lists in `config/lexicon.json` → retune per genre without code |
+| 3 signals | code + learned model | per beat: hook (slap, shock line, scream), cliff (unresolved action, reaction push-in, music sting), backstory debt, self-explaining relations. Word lists in `config/lexicon.json` → retune per genre without code. A **learned cliffhanger model** (`promo_finder/bow.py`, bag-of-words logistic regression trained on the show's own episode endings) is added on top: 76% vs 64% for the word lists at picking a real ending out of 4, and 60% vs 6% first-try out of ~27. It ships as a model file, so the free tier needs no key. Retrain for a new show with `promo_finder.bow`. |
 | 4 candidates | code | every legal cut: on shot boundaries, never mid-line, 20–60 s. Supercuts join 2–3 beats from different episodes on one story thread |
 | 5 compose | LLM | "trailer editor" builds supercuts from validated beat IDs only; code re-checks order, length, IDs (hallucinated IDs rejected and logged) |
 | 5b scout | LLM | reads each episode once, names the moments a scroller would stop on (situational hooks words can't see, e.g. a bride seeing her groom with another woman); code snaps them to legal cuts |
@@ -40,7 +40,8 @@ for any agent to answer (used for testing with a Claude Code Haiku subagent; see
 
 ## Quality checks (`eval`)
 
-* **A. Cliffhanger benchmark with writer ground truth.** Every episode is written to end on a
+* **A. One test every scorer takes** (`promo_finder/fourway.py`): 4 blind endings per episode, pick the real one. Chance 25%, word lists 64%, learned model 76% (fold-held-out).
+* **A2. Cliffhanger benchmark with writer ground truth.** Every episode is written to end on a
   cliffhanger (22 scripts even say so in the notes). With every label word, every
   "cut to black", and all position info removed, does the tool rank the real ending among
   ~27 legal cut points? Reported against chance, on held-out episodes 26–50.

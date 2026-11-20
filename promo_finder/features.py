@@ -18,7 +18,11 @@ from pathlib import Path
 
 from .parse import Episode, Event
 
+import os
+
 ROOT = Path(__file__).resolve().parent.parent
+HOOK_WINDOW = float(os.environ.get("PROMO_HOOK_WINDOW", 3.0))   # hook must land within this many seconds
+CLIFF_TAIL = float(os.environ.get("PROMO_CLIFF_TAIL", 4.0))     # cliffhanger must land in the last this many
 DEFAULT_LEXICON = ROOT / "config" / "lexicon.json"
 
 
@@ -155,9 +159,9 @@ def window_profile(ep: Episode, sigs: list[Signals], t0: float, t1: float):
         if ev.end <= t0 or ev.start >= t1:
             continue
         n += 1
-        if ev.start < t0 + 3.0 and s.hook > hook:
+        if ev.start < t0 + HOOK_WINDOW and s.hook > hook:
             hook, hook_ev = s.hook, ev
-        if ev.end > t1 - 4.0 and ev.end <= t1 + 0.01 and s.cliff > cliff:
+        if ev.end > t1 - CLIFF_TAIL and ev.end <= t1 + 0.01 and s.cliff > cliff:
             cliff, cliff_ev = s.cliff, ev
         dens += s.hook
         debt += s.debt

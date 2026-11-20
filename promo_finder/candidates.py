@@ -18,8 +18,11 @@ from dataclasses import dataclass, field
 from .features import Signals, window_profile
 from .parse import Episode, sec_to_ts
 
-MIN_LEN, MAX_LEN = 20.0, 60.0
-SWEET = (28.0, 50.0)
+import os
+
+MIN_LEN = float(os.environ.get("PROMO_MIN_LEN", 20.0))
+MAX_LEN = float(os.environ.get("PROMO_MAX_LEN", 60.0))
+SWEET = (float(os.environ.get("PROMO_SWEET_LO", 28.0)), float(os.environ.get("PROMO_SWEET_HI", 50.0)))
 STOP = set("""the a an and or but if of to in on at by for with from as is are was were be been being this that these those
 it its he she they them his her their you your i me my we our us not no yes so do does did have has had will would can could
 shall should may might must just than then there here what who whom which when where why how all any some more most very
@@ -29,6 +32,21 @@ STOP |= set("""close closeup medium wide shot shots tracking camera frame framin
 focus face faces eyes expression looking looks look stares staring turns toward towards behind front background foreground
 slowly slight slightly into across beside holds holding hold steps step stands standing sits sitting stand moment beat
 light lighting shadow shadows room hall door doors open opens table chair""".split())
+_SCORER = None
+MODEL_CLIFF_W = float(os.environ.get("PROMO_MODEL_CLIFF_W", 1.0))   # 0 = pure rules
+
+
+def set_scorer(sc):
+    """Install the learned cliffhanger model (promo_finder.bow.Scorer)."""
+    global _SCORER
+    _SCORER = sc if (sc is not None and sc.ok) else None
+
+
+def model_cliff(ep, t):
+    """0-6ish, same scale as the rule cliff score, so the two can be added."""
+    return 0.0 if _SCORER is None else 6.0 * MODEL_CLIFF_W * _SCORER.cliff(ep, t)
+
+
 RESPONSE_OPENERS = ("yes", "no", "because", "but", "and", "then", "so", "well", "exactly", "indeed", "that's why", "as you")
 
 
@@ -121,6 +139,8 @@ def len_penalty(d: float) -> float:
 def score_span(ep, sigs, t0, t1, w=None):
     w = w or {}
     p = window_profile(ep, sigs, t0, t1)
+    p["cliff_model"] = model_cliff(ep, t1)
+    p["cliff"] = p["cliff"] + p["cliff_model"]
     chars, words, first_line = span_info(ep, t0, t1)
     mid_convo = bool(first_line and first_line.text.lower().startswith(RESPONSE_OPENERS) and first_line.start < t0 + 4)
     crowd = max(0, len(chars) - 4)
@@ -164,7 +184,8 @@ def singles(eps, sigmap, per_ep=4, weights=None, min_hook=1.5, min_cliff=1.0):
             c = Candidate(cid=f"E{ep.num:02d}-S{len(kept) + 1}", kind="single", segments=[seg],
                           rule_score=round(s, 3),
                           parts={k: (round(v, 2) if isinstance(v, float) else v) for k, v in p.items()
-                                 if k in ("hook", "cliff", "density", "debt", "explain", "mid_convo", "crowd")},
+                                 if k in ("hook", "cliff", "cliff_model", "density", "debt", "explain",
+                                          "mid_convo", "crowd")},
                           hook_text=describe(p["hook_ev"]), cliff_text=describe(p["cliff_ev"]),
                           chars=p["chars"], thread=sorted(p["words"])[:0])
             c._words = p["words"]
@@ -185,6 +206,7 @@ def beats(eps, sigmap, lo=5.0, hi=18.0):
             for t1 in outs:
                 if lo <= t1 - t0 <= hi:
                     p = window_profile(ep, sigs, t0, t1)
+                    p["cliff"] += model_cliff(ep, t1)
                     chars, words, first = span_info(ep, t0, t1)
                     res.append({"ep": ep.num, "t0": t0, "t1": t1, "hook": p["hook"], "cliff": p["cliff"],
                                 "dens": p["density"], "debt": p["debt"], "explain": p["explain"],

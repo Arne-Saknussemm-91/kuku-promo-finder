@@ -13,3 +13,7 @@ config/.ablation_tmp.json
 .venv/
 submission/
 docs/solution.*
+
+# a model trained on the pack carries its vocabulary (estate names): keep it private.
+# the repo ships config/model_cliff_demo.json, trained on the public demo show.
+config/model_cliff.json
