@@ -31,7 +31,20 @@ def run_pipeline(folder: str, provider: str, model: str | None, key: str | None,
     from promo_finder.pipeline import run
     logs: list[str] = []
     recs, meta = run(folder, str(out), provider=provider, model=model or None, top_k=top, log=logs.append)
-    return recs, meta, str(out), logs
+    scripts = {}
+    if recs:
+        # the paper edit: every line the viewer actually sees, middle included
+        from promo_finder.candidates import Segment
+        from promo_finder.cast import build_cast
+        from promo_finder.judge import transcript
+        from promo_finder.parse import load_show
+        eps = load_show(folder)
+        build_cast(eps, Path(out) / "aliases.json")
+        E = {e.num: e for e in eps}
+        for r in recs:
+            segs = [Segment(x["episode"], x["start_s"], x["end_s"]) for x in r["segments"]]
+            scripts[r["id"]] = transcript(E, segs, max_cam=160)
+    return recs, meta, str(out), logs, scripts
 
 
 st.title("🎬 Promo Finder")
@@ -79,7 +92,7 @@ if go:
 
     with st.spinner("Parsing, finding every legal cut, scoring…"):
         try:
-            recs, meta, outdir, logs = run_pipeline(folder, provider, model, key, top)
+            recs, meta, outdir, logs, scripts = run_pipeline(folder, provider, model, key, top)
         except SystemExit as e:
             st.error(str(e))
             st.stop()
@@ -106,6 +119,8 @@ if go:
                 st.caption(f"Stranger test ({r['stranger_match_0_2']}/2): “{r['stranger_summary']}”")
             if r.get("confusing_for_new_viewer") and r["confusing_for_new_viewer"].lower() != "nothing":
                 st.caption(f"Might confuse a newcomer: {r['confusing_for_new_viewer']}")
+            st.markdown("**The whole clip — every line the viewer sees**")
+            st.code(scripts.get(r["id"], ""), language=None)
 
     st.subheader("Take it away")
     o = Path(outdir)
